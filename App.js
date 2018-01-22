@@ -1,8 +1,57 @@
 import React, { Component } from 'react';
-import { Image } from 'react-native';
-import { Container, Header, Title, View, DeckSwiper, Card, CardItem, Thumbnail, Content, Footer, FooterTab, Button, Left, Right, Body, Icon, Text } from 'native-base';
+import axios from 'axios';
+import { StyleSheet } from 'react-native';
+import { Container, Header, Title, View, Icon, DeckSwiper, Card, CardItem, Thumbnail, Content, Footer, FooterTab, Button, Left, Right, Body, Text } from 'native-base';
 
 export default class App extends Component {
+
+    state = { contacts: [] };
+
+    componentWillMount() {
+
+        axios.get('http://192.168.1.126:3000/contacts')
+            .then(response => this.setState({ contacts: response.data }));
+    }
+
+    renderContacts() {
+        console.log(this.state.contacts);
+    }
+    renderContactsList() {
+        return this.state.contacts.map(contact =>
+            <Card>
+                <CardItem header>
+                    <Icon name="contact" />
+                        <Text>{contact.name}</Text>
+                    <Right>
+                        {contact.gender == "female" ? (
+                            <Icon name="md-female" />
+                        ) : (<Icon name="md-male" />
+                        )}
+                    </Right>
+                </CardItem>
+                <CardItem>
+                    <Icon active name="md-mail" />
+                    <Text>Email: {contact.email}</Text>
+                </CardItem>
+                <CardItem>
+                    <Icon active name="md-calendar" />
+                    <Text>Aniversário: {contact.birthdate}</Text>
+                </CardItem>
+                <CardItem>
+                    <Icon active name="logo-octocat" />
+                    <Text>Idade: {contact.age} anos</Text>
+                </CardItem>
+                <CardItem>
+                    <Icon active name="ios-briefcase" />
+                    <Text>Curso: {contact.course}</Text>
+                    <Right>
+                        <Text>Semestre: {contact.semester}</Text>
+                    </Right>
+                    </CardItem>
+            </Card>
+        );
+    }
+
     render() {
         return (
             <Container>
@@ -28,10 +77,9 @@ export default class App extends Component {
                         </Button>
                     </Right>
                 </Header>
-                <Content contentContainerStyle={{alignItems: 'center',padding: 5}}>
-                    <Image
-                        style={{marginTop: 15}}
-                        source={require('./src/img/concentro.png')}/>
+                <Content contentContainerStyle={{padding: 5}}>
+                    {this.renderContacts()}
+                    {this.renderContactsList()}
                 </Content>
                 <Footer >
                     <FooterTab style={{backgroundColor: 'purple'}}>
@@ -53,3 +101,9 @@ export default class App extends Component {
         );
     }
 }
+
+var styles = StyleSheet.create({
+    flexStyle: {
+        flex: 1
+    }
+});
